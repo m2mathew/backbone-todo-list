@@ -41,8 +41,6 @@ $(document).ready(function(){
         newTodoItem.save();
         var newHtml = todoTemplate(newTodoItem.toJSON());
         $todoList.append(newHtml);
-
-        // $ingredientList.append('<li />' + newIngredient.get('ingredient'));
     }
 
 
@@ -56,7 +54,10 @@ $(document).ready(function(){
     $form.on('submit', onFormSubmit);
 
 
-    // 3b. connect Backbone like model with onLikeModelChange function
+    // 3b. connect Backbone todo model with onTodoItemAdded function
     todoItems.on('add', onTodoItemAdded);
     todoItems.fetch();
+    setInterval(function() {
+        todoItems.fetch();
+        }, 10000);
 });

@@ -12714,8 +12714,6 @@ $(document).ready(function () {
         newTodoItem.save();
         var newHtml = todoTemplate(newTodoItem.toJSON());
         $todoList.append(newHtml);
-
-        // $ingredientList.append('<li />' + newIngredient.get('ingredient'));
     }
 
     // /*
@@ -12727,9 +12725,12 @@ $(document).ready(function () {
     // event: submit
     $form.on('submit', onFormSubmit);
 
-    // 3b. connect Backbone like model with onLikeModelChange function
+    // 3b. connect Backbone todo model with onTodoItemAdded function
     todoItems.on('add', onTodoItemAdded);
     todoItems.fetch();
+    setInterval(function () {
+        todoItems.fetch();
+    }, 10000);
 });
 
 },{"./collections/TodoCollection":4,"./models/TodoModel":6,"backbone/node_modules/underscore":2,"jquery":3}],6:[function(require,module,exports){
