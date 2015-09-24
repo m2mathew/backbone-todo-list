@@ -12677,11 +12677,9 @@ var $ = require('jquery');
 var TodoModel = require('./models/TodoModel');
 var TodoCollection = require('./collections/TodoCollection');
 var _ = require('backbone/node_modules/underscore');
+var TodoView = require('./views/TodoView');
 
 $(document).ready(function () {
-    /*
-     * WHO are the actors?
-     */
 
     // 1a. Target the element
     var $doLabel = $('#do-label');
@@ -12689,13 +12687,11 @@ $(document).ready(function () {
     var $form = $('.user-text');
     var $todoList = $('#main-list');
     var todoTemplate = _.template($('#todo-row').html());
+    var $checkButton = $('#check-off');
+    var $deleteAllButton = $('#delete-all-button');
 
-    // 1b. Create a new instance of backbone model
+    // 1b. Create a new instance of backbone collection
     var todoItems = new TodoCollection();
-
-    /*
-    * WHAT is going to happen? (functions)
-    */
 
     // 2a. function to run when jQuery event happens - add likes to the model
     // event: submit
@@ -12706,24 +12702,30 @@ $(document).ready(function () {
         todoItems.add({
             todoItem: newTodoItem
         });
+        $doLabel.val('');
     }
 
     // 2b. function to run when model or collection event happens
     // use jQuery to update the page
     function onTodoItemAdded(newTodoItem) {
         newTodoItem.save();
+        var todoItem1 = new TodoView({ model: newTodoItem });
         var newHtml = todoTemplate(newTodoItem.toJSON());
         $todoList.append(newHtml);
     }
 
-    // /*
-    //  * WHEN is it going to happen? (event listeners)
-    //  */
+    // function purgeTodoItem() {
+    //     todoItem.destroy({success: function(model, response) {
+
+    //         }
+    //     });
+    // }
 
     // 3a. connect jQuery like button element with onButtonClick function
     // element: form
     // event: submit
     $form.on('submit', onFormSubmit);
+    // $checkButton.on('click', purgeTodoItem);
 
     // 3b. connect Backbone todo model with onTodoItemAdded function
     todoItems.on('add', onTodoItemAdded);
@@ -12733,20 +12735,61 @@ $(document).ready(function () {
     }, 10000);
 });
 
-},{"./collections/TodoCollection":4,"./models/TodoModel":6,"backbone/node_modules/underscore":2,"jquery":3}],6:[function(require,module,exports){
+},{"./collections/TodoCollection":4,"./models/TodoModel":6,"./views/TodoView":7,"backbone/node_modules/underscore":2,"jquery":3}],6:[function(require,module,exports){
 'use strict';
 
 var Backbone = require('backbone');
 
 module.exports = Backbone.Model.extend({
     defaults: {
-        todoItem: ''
+        todoItem: '',
+        completed: false
     },
     urlRoot: 'http://tiyfe.herokuapp.com/collections/mike_m_backbone-todo',
     idAttribute: '_id'
 });
 
-},{"backbone":1}]},{},[5])
+},{"backbone":1}],7:[function(require,module,exports){
+'use strict';
+
+var Backbone = require('backbone');
+var _ = require('backbone/node_modules/underscore');
+var TodoModel = require('../models/TodoModel');
+
+module.exports = Backbone.View.extend({
+    tagName: 'div',
+    initialize: function initialize() {
+        _.bindAll(this, 'onTodoButtonClick', 'render', 'remove');
+        this.model.on('change', this.render);
+        this.$el.on('click', this.onTodoButtonClick);
+        this.render();
+    },
+    render: function render() {
+        var todoItem = this.model.get('todoItem');
+        this.$el.html('<span>' + todoItem + '</span><button>delete</button>');
+        if (!this.model.get('completed')) {
+            this.$el.css('text-decoration', 'line-through');
+        } else {
+            this.$el.css('text-decoration', 'none');
+        }
+        this.$el.find('button').on('click', this.remove);
+    },
+    onTodoButtonClick: function onTodoButtonClick() {
+        console.log('Submit button was clicked');
+        var newTodoItem = this.model.get('todoItem');
+        this.$el.set({ completed: true });
+    },
+    toggleCompletion: function toggleCompletion() {
+        this.model.set({
+            completed: !this.model.get('completed')
+        });
+    },
+    remove: function remove() {
+        this.$el.remove();
+    }
+});
+
+},{"../models/TodoModel":6,"backbone":1,"backbone/node_modules/underscore":2}]},{},[5])
 
 
 //# sourceMappingURL=bundle.js.map

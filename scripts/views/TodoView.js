@@ -5,31 +5,40 @@ var _ = require('backbone/node_modules/underscore');
 var TodoModel = require('../models/TodoModel');
 
 module.exports = Backbone.View.extend({
-    tagName: 'button',
-    // events: {
-    //     'click': 'onTodoButtonClick'  // shorthand version
-    // },
+    tagName: 'div',
     initialize: function() {
         _.bindAll (
             this,
             'onTodoButtonClick',
-            'render'
+            'render',
+            'remove'
         );
-        console.log('the todo item was just created!');
-        this.model = new TodoModel();
-        this.$el.on('click', this.onTodoButtonClick);  // long version
-        this.model.on('change');
+        this.model.on('change', this.render);
+        this.$el.on('click', this.onTodoButtonClick);
         this.render();
     },
     render: function() {
         var todoItem = this.model.get('todoItem');
-        this.$el.html(todoItem);
+        this.$el.html('<span>' + todoItem + '</span><button>delete</button>');
+        if(!this.model.get('completed')) {
+            this.$el.css('text-decoration', 'line-through');
+        }
+        else {
+            this.$el.css('text-decoration', 'none');
+        }
+        this.$el.find('button').on('click', this.remove);
     },
     onTodoButtonClick: function() {
         console.log('Submit button was clicked');
         var newTodoItem = this.model.get('todoItem');
+        this.$el.set({completed: true});
+    },
+    toggleCompletion: function() {
         this.model.set({
-            todoItem: newTodoItem
+            completed: !this.model.get('completed')
         });
+    },
+    remove: function() {
+        this.$el.remove();
     }
 });
