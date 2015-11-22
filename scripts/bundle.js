@@ -12691,28 +12691,30 @@ $(document).ready(function () {
     var $deleteAllButton = $('#delete-all-button');
 
     // 1b. Create a new instance of backbone collection
-    var todoItems = new TodoCollection();
+    // var todoItems = new TodoCollection();
+    var todoItem = new TodoModel();
+    $('body').append(todoItem.$el);
 
     // 2a. function to run when jQuery event happens - add likes to the model
     // event: submit
     // action: get data and store it in the collection
-    function onFormSubmit(e) {
-        e.preventDefault();
-        var newTodoItem = $doLabel.val();
-        todoItems.add({
-            todoItem: newTodoItem
-        });
-        $doLabel.val('');
-    }
+    // function onFormSubmit(e) {
+    //     e.preventDefault();
+    //     var newTodoItem = $doLabel.val();
+    //     todoItems.add({
+    //         todoItem: newTodoItem
+    //     });
+    //     $doLabel.val('');
+    // }
 
     // 2b. function to run when model or collection event happens
     // use jQuery to update the page
-    function onTodoItemAdded(newTodoItem) {
-        newTodoItem.save();
-        var todoItem1 = new TodoView({ model: newTodoItem });
-        var newHtml = todoTemplate(newTodoItem.toJSON());
-        $todoList.append(newHtml);
-    }
+    // function onTodoItemAdded(newTodoItem) {
+    //     newTodoItem.save();
+    //     var todoItem1 = new TodoView({model: newTodoItem});
+    //     var newHtml = todoTemplate(newTodoItem.toJSON());
+    //     $todoList.append(newHtml);
+    // }
 
     // function purgeTodoItem() {
     //     todoItem.destroy({success: function(model, response) {
@@ -12724,15 +12726,12 @@ $(document).ready(function () {
     // 3a. connect jQuery like button element with onButtonClick function
     // element: form
     // event: submit
-    $form.on('submit', onFormSubmit);
+    // $form.on('submit', onFormSubmit);
     // $checkButton.on('click', purgeTodoItem);
 
     // 3b. connect Backbone todo model with onTodoItemAdded function
-    todoItems.on('add', onTodoItemAdded);
-    todoItems.fetch();
-    setInterval(function () {
-        todoItems.fetch();
-    }, 10000);
+    // todoItems.on('add', onTodoItemAdded);
+    // todoItems.fetch();
 });
 
 },{"./collections/TodoCollection":4,"./models/TodoModel":6,"./views/TodoView":7,"backbone/node_modules/underscore":2,"jquery":3}],6:[function(require,module,exports){
@@ -12759,6 +12758,7 @@ var TodoModel = require('../models/TodoModel');
 module.exports = Backbone.View.extend({
     tagName: 'div',
     initialize: function initialize() {
+        console.log('data initialized');
         _.bindAll(this, 'onTodoButtonClick', 'render', 'remove');
         this.model.on('change', this.render);
         this.$el.on('click', this.onTodoButtonClick);

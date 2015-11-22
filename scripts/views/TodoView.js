@@ -7,6 +7,7 @@ var TodoModel = require('../models/TodoModel');
 module.exports = Backbone.View.extend({
     tagName: 'div',
     initialize: function() {
+        console.log('data initialized');
         _.bindAll (
             this,
             'onTodoButtonClick',
